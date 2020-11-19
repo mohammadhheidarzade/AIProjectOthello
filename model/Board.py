@@ -1,5 +1,5 @@
-from SquareType import SquareType
-from Item import Item
+from model.SquareType import SquareType
+from model.Item import Item
 
 
 class Board:
