@@ -3,3 +3,7 @@ class Item:
         self.row = row
         self.col = col
         self.val = val
+
+    def __eq__(self, other):
+        return self.row == other.row and self.col == other.col
+
