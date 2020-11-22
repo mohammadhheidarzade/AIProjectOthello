@@ -73,12 +73,15 @@ class Board:
     def move(self, row, col):
         if len(self.squares) == 0:
             self.freezeCount += 1
+            self.toggleTurn()
+            return
         else:
             self.freezeCount = 0
         if self.freezeCount >= 2:
             print('Game finished')
             self.isEnded = True
             self.showFinalResult()
+            return
         item = Item(row, col, SquareType.EMPTY)
         if not self.squares.__contains__(item):
             print('It\'s not a valid move')
