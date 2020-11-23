@@ -1,1 +1,1 @@
-import view.OthelloBoard
+import controller.Othello

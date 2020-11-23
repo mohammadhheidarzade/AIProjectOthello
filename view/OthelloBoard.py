@@ -1,13 +1,11 @@
 import pygame
-
-from model.Board import Board
 from model.Item import Item
 from model.SquareType import SquareType
 
 
 
 class BoardView:
-    def __init__(self, baordGame):
+    def __init__(self, boardGame):
         self.SCREEN_WIDTH = 600
         self.SCREEN_HEIGHT = 600
         self.boardScreen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
@@ -67,12 +65,10 @@ class BoardView:
     def run(self):
         pygame.init()
         self.running = True
-        screen = self.boardScreen
-        game =  self.boardGame
         speed = 1
 
         while self.running:
-            screen.fill((255, 255, 255))
+            self.boardScreen.fill((255, 255, 255))
             self.drawGrid()
             self.drawBoard(self.boardGame.board)
             self.showValidMoves(self.boardGame)
@@ -90,6 +86,3 @@ class BoardView:
 
             pygame.display.flip()
         pygame.quit()
-boardGame = Board()
-myBoard = BoardView(boardGame)
-myBoard.run()
