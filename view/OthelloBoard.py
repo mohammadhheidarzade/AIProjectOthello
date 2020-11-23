@@ -44,7 +44,7 @@ class BoardView:
                 planetColor = (0, 0, 0, transparency + 20)
             surface = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
             pygame.draw.circle(surface, planetColor, pos, planetRadius)
-            screen.blit(surface, (0, 0))
+            self.boardScreen.blit(surface, (0, 0))
             return
         else:
             return
@@ -62,36 +62,40 @@ class BoardView:
             item = Item(square.row, square.col, SquareType.VALID)
             self.drawCircle(item, board.turn)
 
-
-
-
-pygame.init()
-running = True
-myBoard = BoardView()
-screen = myBoard.boardScreen
-game = Board()
-speed = 1
-
-
-while running:
-
-    screen.fill((255, 255, 255))
-    myBoard.drawGrid()
-    myBoard.drawBoard(game.board)
-    myBoard.showValidMoves(game)
-    if myBoard.counter == 100:
-        speed = -1
-    elif myBoard.counter == 0:
+    def run(self):
+        pygame.init()
+        pygame.init()
+        running = True
+        myBoard = BoardView()
+        screen = myBoard.boardScreen
+        game = Board()
         speed = 1
-    myBoard.counter += speed
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            myBoard.move(game, event)
+        while running:
 
-    pygame.display.flip()
+            screen.fill((255, 255, 255))
+            myBoard.drawGrid()
+            myBoard.drawBoard(game.board)
+            myBoard.showValidMoves(game)
+            if myBoard.counter == 100:
+                speed = -1
+            elif myBoard.counter == 0:
+                speed = 1
+            myBoard.counter += speed
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    myBoard.move(game, event)
+
+            pygame.display.flip()
 
 
-pygame.quit()
+        pygame.quit()
+        
+
+
+
+myBoard = BoardView()
+myBoard.run()
