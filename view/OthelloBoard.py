@@ -5,6 +5,7 @@ from model.Item import Item
 from model.SquareType import SquareType
 
 
+
 class BoardView:
     def __init__(self):
         self.SCREEN_WIDTH = 600
@@ -60,6 +61,8 @@ class BoardView:
         for square in board.squares:
             item = Item(square.row, square.col, SquareType.VALID)
             self.drawCircle(item, board.turn)
+
+
 
 
 pygame.init()
