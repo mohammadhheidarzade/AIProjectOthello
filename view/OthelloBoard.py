@@ -7,13 +7,15 @@ from model.SquareType import SquareType
 
 
 class BoardView:
-    def __init__(self):
+    def __init__(self, baordGame):
         self.SCREEN_WIDTH = 600
         self.SCREEN_HEIGHT = 600
         self.boardScreen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
         self.LINE_COLOR = (0, 0, 0)
         self.boardColor = (0, 250, 0)
         self.counter = 0
+        self.running = False
+        self.boardGame = boardGame
 
     def drawGrid(self):
         blockSize = 60  # Set the size of the grid block
@@ -64,38 +66,30 @@ class BoardView:
 
     def run(self):
         pygame.init()
-        pygame.init()
-        running = True
-        myBoard = BoardView()
-        screen = myBoard.boardScreen
-        game = Board()
+        self.running = True
+        screen = self.boardScreen
+        game =  self.boardGame
         speed = 1
 
-        while running:
-
+        while self.running:
             screen.fill((255, 255, 255))
-            myBoard.drawGrid()
-            myBoard.drawBoard(game.board)
-            myBoard.showValidMoves(game)
-            if myBoard.counter == 100:
+            self.drawGrid()
+            self.drawBoard(self.boardGame.board)
+            self.showValidMoves(self.boardGame)
+            if self.counter == 100:
                 speed = -1
-            elif myBoard.counter == 0:
+            elif self.counter == 0:
                 speed = 1
-            myBoard.counter += speed
+            self.counter += speed
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    myBoard.move(game, event)
+                    self.move(self.boardGame, event)
 
             pygame.display.flip()
-
-
         pygame.quit()
-        
-
-
-
-myBoard = BoardView()
+boardGame = Board()
+myBoard = BoardView(boardGame)
 myBoard.run()
