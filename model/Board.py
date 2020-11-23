@@ -1,7 +1,6 @@
 from model.SquareType import SquareType
 from model.Item import Item
 
-
 class Board:
 
     def __init__(self):

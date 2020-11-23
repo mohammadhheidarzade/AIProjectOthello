@@ -1,6 +1,10 @@
 from model.Board import Board
-from view.OthelloBoard import BoardView
+from view.OthelloView import BoardView
 
-boardGame = Board()
-myBoard = BoardView(boardGame)
-myBoard.run()
+class Othello:
+    def __init__(self):
+        self.boardGame = Board()
+        self.myBoard = BoardView(self.boardGame)
+
+    def playGame(self):
+        self.myBoard.run()
