@@ -1,5 +1,6 @@
 import pygame
 from model.Item import Item
+from model.ScreenType import ScreenType
 from model.SquareType import SquareType
 
 
@@ -11,6 +12,7 @@ class BoardView:
         self.boardScreen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
         self.LINE_COLOR = (0, 0, 0)
         self.boardColor = (0, 250, 0)
+        self.endScreenColor = (0, 0, 0, 200)
         self.counter = 0
         self.running = False
         self.boardGame = boardGame
@@ -62,6 +64,61 @@ class BoardView:
             item = Item(square.row, square.col, SquareType.VALID)
             self.drawCircle(item, board.turn)
 
+    def showScores(self, color):
+        if color == 'b':
+            score = self.boardGame.blackCount
+            text = 'Black score : '
+            pos = (440, 10)
+        else:
+            score = self.boardGame.whiteCount
+            text = 'White score : '
+            pos = (5, 10)
+        largeFont = pygame.font.SysFont('comicsans', 30)
+        scoreText = largeFont.render(text + str(score), 1, (0, 0, 0))
+        self.boardScreen.blit(scoreText, pos)
+
+    def showEndScreen(self):
+        largeFont = pygame.font.SysFont('comicsans', 50)
+        # main rect for end screen
+        surface = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
+        rect = (40, 40, 520, 520)
+        pygame.draw.rect(surface, self.endScreenColor, rect, 0)
+        self.boardScreen.blit(surface, (0, 0))
+
+        # button to restart
+        # TODO
+        surface2 = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
+        rect2 = (390, 420, 145, 55)
+        pygame.draw.rect(surface2, (250, 0, 0, 150), rect2, 0)
+        self.boardScreen.blit(surface2, (0, 0))
+        buttonPos = (400, 430)
+        endText = largeFont.render('Restart', 1, (255, 255, 255))
+        self.boardScreen.blit(endText, buttonPos)
+
+        # main text for end screen
+        pos = (200, 100)
+        endText = largeFont.render('Game Ended', 1, (250, 0, 0))
+        self.boardScreen.blit(endText, pos)
+
+        # score related texts
+        winnerPos = (140, 250)
+        if self.boardGame.whiteCount > self.boardGame.blackCount:
+            winnerText = largeFont.render(f"White Player Won!!", 1, (255, 255, 255))
+        elif self.boardGame.whiteCount < self.boardGame.blackCount:
+            winnerText = largeFont.render(f"White Player Won!!", 1, (255, 255, 255))
+        else:
+            winnerPos = (270, 250)
+            winnerText = largeFont.render(f"Tie!!", 1, (255, 255, 255))
+        self.boardScreen.blit(winnerText, winnerPos)
+
+        pos2 = (100, 390)
+        endScoreText = largeFont.render(f"White Score is {self.boardGame.whiteCount}", 1, (255, 255, 255))
+        self.boardScreen.blit(endScoreText, pos2)
+
+        pos3 = (100, 450)
+        endScoreText2 = largeFont.render(f"Black Score is {self.boardGame.blackCount}", 1, (255, 255, 255))
+        self.boardScreen.blit(endScoreText2, pos3)
+
     def run(self):
         pygame.init()
         self.running = True
@@ -69,9 +126,13 @@ class BoardView:
 
         while self.running:
             self.boardScreen.fill((255, 255, 255))
+            self.showScores('b')
+            self.showScores('w')
             self.drawGrid()
             self.drawBoard(self.boardGame.board)
             self.showValidMoves(self.boardGame)
+            if self.boardGame.isEnded:
+                self.showEndScreen()
             if self.counter == 100:
                 speed = -1
             elif self.counter == 0:

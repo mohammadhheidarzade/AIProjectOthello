@@ -70,17 +70,19 @@ class Board:
             self.turn = SquareType.BLACK
 
     def move(self, row, col):
+        # print(self.squares.__len__())
         if len(self.squares) == 0:
             self.freezeCount += 1
+            if self.freezeCount >= 2:
+                print('Game finished')
+                self.isEnded = True
+                self.showFinalResult()
+                return
             self.toggleTurn()
+            self.validSquares()
             return
         else:
             self.freezeCount = 0
-        if self.freezeCount >= 2:
-            print('Game finished')
-            self.isEnded = True
-            self.showFinalResult()
-            return
         item = Item(row, col, SquareType.EMPTY)
         if not self.squares.__contains__(item):
             print('It\'s not a valid move')
