@@ -52,6 +52,8 @@ class Board:
                 return False
             if seenDiffTurnColor and self.board[i][j].val == self.turn:
                 return True
+            elif self.board[i][j].val == SquareType.EMPTY:
+                return False
         return False
 
     def isValidIJ(self, i, j):
@@ -101,7 +103,6 @@ class Board:
             print('White player won')
         else:
             print('Tie!')
-       # self.isEnded = True
 
     def changeColor(self, row, col, diri, dirj):
         self.board[row][col].val = self.turn
