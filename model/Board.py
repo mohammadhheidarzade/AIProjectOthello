@@ -79,6 +79,7 @@ class Board:
             for dirj in range(-1, 2):
                 if self.iterateBoaredForValidation(row, col, diri, dirj):
                     self.changeColor(row, col, diri, dirj)
+        self.updateScores()
 
         self.toggleTurn()
         self.validSquares()
@@ -106,28 +107,24 @@ class Board:
 
     def changeColor(self, row, col, diri, dirj):
         self.board[row][col].val = self.turn
-        self.updateScores(True)
         row += diri
         col += dirj
         while self.isValidIJ(row, col) and self.board[row][col].val != self.turn:
             self.board[row][col].val = self.turn
-            self.updateScores(False)
             row += diri
             col += dirj
 
-    def updateScores(self, isEmpty):
-        if not isEmpty:
-            if self.turn == SquareType.BLACK:
-                self.blackCount += 1
-                self.whiteCount -= 1
-            else:
-                self.whiteCount += 1
-                self.blackCount -= 1
-        else:
-            if self.turn == SquareType.BLACK:
-                self.blackCount += 1
-            else:
-                self.whiteCount += 1
+    def updateScores(self):
+        whiteTemp = 0
+        blackTemp = 0
+        for row in self.board:
+            for item in row:
+                if item.val == SquareType.BLACK:
+                    blackTemp += 1
+                elif item.val == SquareType.WHITE:
+                    whiteTemp += 1
+        self.blackCount = blackTemp
+        self.whiteCount = whiteTemp
 
 
 if __name__ == '__main__':

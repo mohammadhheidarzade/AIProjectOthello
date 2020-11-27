@@ -1,4 +1,6 @@
 import pygame
+
+from model.Board import Board
 from model.Item import Item
 from model.ScreenType import ScreenType
 from model.SquareType import SquareType
@@ -105,7 +107,7 @@ class BoardView:
         if self.boardGame.whiteCount > self.boardGame.blackCount:
             winnerText = largeFont.render(f"White Player Won!!", 1, (255, 255, 255))
         elif self.boardGame.whiteCount < self.boardGame.blackCount:
-            winnerText = largeFont.render(f"White Player Won!!", 1, (255, 255, 255))
+            winnerText = largeFont.render(f"Black Player Won!!", 1, (255, 255, 255))
         else:
             winnerPos = (270, 250)
             winnerText = largeFont.render(f"Tie!!", 1, (255, 255, 255))
@@ -118,6 +120,11 @@ class BoardView:
         pos3 = (100, 450)
         endScoreText2 = largeFont.render(f"Black Score is {self.boardGame.blackCount}", 1, (255, 255, 255))
         self.boardScreen.blit(endScoreText2, pos3)
+
+    def restart(self, event):
+        if 390 <= event.pos[0] <= 535 and 420 <= event.pos[1] <= 475:
+            board = Board()
+            self.boardGame = board
 
     def run(self):
         pygame.init()
@@ -138,12 +145,14 @@ class BoardView:
             elif self.counter == 0:
                 speed = 1
             self.counter += speed
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN and not self.boardGame.isEnded:
                     self.move(self.boardGame, event)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.restart(event)
+
 
             pygame.display.flip()
         pygame.quit()
