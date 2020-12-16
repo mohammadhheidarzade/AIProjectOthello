@@ -4,6 +4,7 @@ from model.Board import Board
 from model.Item import Item
 from model.ScreenType import ScreenType
 from model.SquareType import SquareType
+from model.AIPlayer import AIPlayer
 
 
 
@@ -145,6 +146,12 @@ class BoardView:
             elif self.counter == 0:
                 speed = 1
             self.counter += speed
+
+            if self.boardGame.turn == SquareType.BLACK:
+                player = AIPlayer(self.boardGame)
+                item = player.getNextMove()
+                if not self.boardGame.isEnded:
+                    self.boardGame.move(item[0], item[1])
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
