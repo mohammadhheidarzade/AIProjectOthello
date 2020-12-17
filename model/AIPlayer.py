@@ -6,6 +6,8 @@ from model.Item import Item
 
 import time
 
+import random
+
 
 
 class MiniMaxValue:
@@ -14,14 +16,24 @@ class MiniMaxValue:
         self.item = item
 
 class AIPlayer:
-    cornerWeight = 100 # done
-    edgeWeight = 70   # done
+    cornerWeight = 120 # done
+    edgeWeight = 20   # done
     flipCountWeight = 10
     discCount = 1    # done
     validMoves = 1   # done
     lessValidEnemyMoves = 2
     dangerZone = -50 # done
-    maxDepth = 5
+    maxDepth = 9
+    branch =3
+    
+    squareScores = [[120, -20, 20,  5,  5, 20, -20, 120],
+                    [-20, -40, -5, -5, -5, -5, -40, -20],
+                    [ 20,  -5, 15,  3,  3, 15,  -5,  20],
+                    [  5,  -5,  3,  3,  3,  3,  -5,   5],
+                    [  5,  -5,  3,  3,  3,  3,  -5,   5],
+                    [ 20,  -5, 15,  3,  3, 15,  -5,  20],
+                    [-20, -40, -5, -5, -5, -5, -40, -20],
+                    [120, -20, 20,  5,  5, 20, -20, 120]]
 
     numberOfCalc = 0
 
@@ -39,16 +51,17 @@ class AIPlayer:
         end = time.time()
 
         print(str(self.numberOfCalc) + ' ' + str(end - start) + ' ' + str((end - start) / self.numberOfCalc))
+        
+        print(str(item.item.row) + " " + str(item.item.col))
+        
         return (item.item.row, item.item.col)
 
     # also includes minimax with alpha beta pruning
     def miniMax(self, boardGame, depth, alpha, beta):
-       
-        validSquares = boardGame.squares
         self.numberOfCalc += 1
 
         if boardGame.isEnded:
-            result = MiniMaxValue(500, None)
+            result = MiniMaxValue(500, None) # NONE
             return result
 
         if depth == self.maxDepth:
@@ -56,13 +69,16 @@ class AIPlayer:
             self.board = boardGame.board
             score = self.heuristic()
             self.board = tmpBoard
-            result = MiniMaxValue(score, None)
+            result = MiniMaxValue(score, None) # NONE
             return result
 
+        validSquares = boardGame.squares
+        if len(boardGame.squares) > self.branch:
+            validSquares = self.heuristicForSquare(boardGame.squares, self.branch)
+        
+        itemTmp = None # NONE
         if boardGame.turn == SquareType.BLACK:
             maxi = -math.inf
-            itemTmp = None
-            validSquares = boardGame.squares
             for item in validSquares:
                 copyBoardGame = deepcopy(boardGame)
                 copyBoardGame.move(item.row, item.col)
@@ -76,8 +92,6 @@ class AIPlayer:
             return MiniMaxValue(maxi, itemTmp)
         else:
             mini = math.inf
-            itemTmp = None
-            validSquares = boardGame.squares
             for item in validSquares:
                 copyBoardGame = deepcopy(boardGame)
                 copyBoardGame.move(item.row, item.col)
@@ -90,23 +104,42 @@ class AIPlayer:
                 beta = min(beta, mini)
             return MiniMaxValue(mini, itemTmp)
 
+    
+    def heuristicForSquare(self, validSquares, resNum):
+        tempHeuristic = []
+        for item in validSquares:
+            tempHeuristic.append((self.squareScores[item.row][item.col], item))
+        tempHeuristic.sort(key= lambda x: x[0])
+        tempChance = []
+        listLen = len(tempHeuristic)
+        divisorNum = (listLen * (listLen - 1)) / 2
+        if divisorNum == 0:
+            return []
+        
+        tmpCh = 0
+        for index in range(0, len(tempHeuristic)):
+            tmpCh += (index + 1) / divisorNum 
+            tempChance.append(tmpCh)
+            
+        cum_chance = tuple(tempChance)
+        res = []
+        resSize = 0
+        while resSize < resNum:
+            randomItem = random.choices(tempHeuristic, cum_weights = cum_chance, k = 1) 
+            if randomItem[0][1] not in res:   
+                res.append(randomItem[0][1])
+                resSize += 1
+        return res
+
     def heuristic(self):
         score = 0
         for row in self.board:
             for item in row:
                 if item.val == SquareType.BLACK or item.val == SquareType.WHITE:
-                    if self.isDangerZone(item):
-                        score += self.dangerZone
-                    elif self.isEdge(item):
-                        score += self.edgeWeight
-                    elif self.isCorner(item):
-                        score += self.cornerWeight
+                    score += self.squareScores[item.row][item.col]
         score += self.countValidMoves() * self.validMoves
         score += self.boardDiscCount() * self.discCount
         return score
-
-    def isDangerZone(self, item):
-        return (1 <= item.row <= 6 and (item.col == 1 or item.col == 6)) or (1 <= item.col <= 6 and (item.row == 1 or item.row == 6))
 
     def countValidMoves(self):
         return len(self.boardGame.squares)
@@ -116,11 +149,3 @@ class AIPlayer:
             return self.boardGame.whiteCount
         elif self.boardGame.turn == SquareType.BLACK:
             return self.boardGame.blackCount
-
-    def isCorner(self, item):
-        return  (item.row == 0 and item.col == 0) or (item.row == 0 and item.col == 7) or \
-                (item.row == 7 and item.col == 7) or \
-                (item.row == 7 and item.col == 0)
-
-    def isEdge(self, item):
-        return  item.row == 0 or item.row == 7 or item.col == 0 or item.col == 7
