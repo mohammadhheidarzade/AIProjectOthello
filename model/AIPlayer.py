@@ -16,16 +16,16 @@ class MiniMaxValue:
         self.item = item
 
 class AIPlayer:
-    cornerWeight = 120 # done
-    edgeWeight = 20   # done
-    flipCountWeight = 10
-    discCount = 1    # done
-    validMoves = 1   # done
-    lessValidEnemyMoves = 2
-    dangerZone = -50 # done
-    maxDepth = 9
-    branch =3
-    
+    # cornerWeight = 120
+    # edgeWeight = 20
+    # flipCountWeight = 10
+    # lessValidEnemyMoves = 2
+    # dangerZone = -50
+
+    discCount = 1
+    validMoves = 1
+    maxDepth = 5
+    branch =1
     squareScores = [[120, -20, 20,  5,  5, 20, -20, 120],
                     [-20, -40, -5, -5, -5, -5, -40, -20],
                     [ 20,  -5, 15,  3,  3, 15,  -5,  20],
@@ -34,26 +34,28 @@ class AIPlayer:
                     [ 20,  -5, 15,  3,  3, 15,  -5,  20],
                     [-20, -40, -5, -5, -5, -5, -40, -20],
                     [120, -20, 20,  5,  5, 20, -20, 120]]
+    
+
+    machineLearningFitures = [120, 20, 5, -5, -20, -40]
+            # Values squaresScores, discCount, validMoves
 
     numberOfCalc = 0
 
-    def __init__(self, boardGame):
-        self.turn = SquareType.BLACK
+    def __init__(self, boardGame, turn, playerFeatures = None):
+        #self.turn = SquareType.BLACK
+        self.turn = turn
         self.boardGame = deepcopy(boardGame)
         self.board = self.boardGame.board
+        if playerFeatures != None:
+            self.squareScores = playerFeatures
 
     def getNextMove(self):
         if (self.boardGame.isEnded):
             return
-
         start = time.time()
         item = self.miniMax(self.boardGame, 0, -math.inf, math.inf)
-        end = time.time()
-
-        print(str(self.numberOfCalc) + ' ' + str(end - start) + ' ' + str((end - start) / self.numberOfCalc))
-        
-        print(str(item.item.row) + " " + str(item.item.col))
-        
+        end = time.time()   
+        #print(end - start)     
         return (item.item.row, item.item.col)
 
     # also includes minimax with alpha beta pruning
@@ -77,7 +79,7 @@ class AIPlayer:
             validSquares = self.heuristicForSquare(boardGame.squares, self.branch)
         
         itemTmp = None # NONE
-        if boardGame.turn == SquareType.BLACK:
+        if boardGame.turn == self.turn:
             maxi = -math.inf
             for item in validSquares:
                 copyBoardGame = deepcopy(boardGame)

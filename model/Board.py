@@ -88,7 +88,7 @@ class Board:
             self.toggleTurn()
             self.validSquares()
             if len(self.squares) == 0:
-                print('Game finished')
+                #print('Game finished')
                 self.isEnded = True
                 self.showFinalResult()
                 return
@@ -96,14 +96,15 @@ class Board:
         
 
     def showFinalResult(self):
-        print(f"White score is {self.whiteCount}")
-        print(f"Black score is {self.blackCount}")
-        if self.blackCount > self.whiteCount:
-            print('Black player won!')
-        elif self.blackCount < self.whiteCount:
-            print('White player won')
-        else:
-            print('Tie!')
+        #print(f"White score is {self.whiteCount}")
+        #print(f"Black score is {self.blackCount}")
+        # if self.blackCount > self.whiteCount:
+        #     print('Black player won!')
+        # elif self.blackCount < self.whiteCount:
+        #     print('White player won')
+        # else:
+        #     print('Tie!')
+        pass
 
     def changeColor(self, row, col, diri, dirj):
         self.board[row][col].val = self.turn

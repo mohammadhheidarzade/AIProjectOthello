@@ -148,15 +148,23 @@ class BoardView:
             self.counter += speed
 
             if self.boardGame.turn == SquareType.BLACK:
-                player = AIPlayer(self.boardGame)
+                player = AIPlayer(self.boardGame, SquareType.BLACK)
                 item = player.getNextMove()
                 if not self.boardGame.isEnded:
                     self.boardGame.move(item[0], item[1])
+
+            if self.boardGame.turn == SquareType.WHITE:
+                player = AIPlayer(self.boardGame, SquareType.WHITE)
+                item = player.getNextMove()
+                if not self.boardGame.isEnded:
+                    self.boardGame.move(item[0], item[1])
+
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN and not self.boardGame.isEnded:
-                    self.move(self.boardGame, event)
+                # elif event.type == pygame.MOUSEBUTTONDOWN and not self.boardGame.isEnded:
+                #     self.move(self.boardGame, event)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.restart(event)
 
