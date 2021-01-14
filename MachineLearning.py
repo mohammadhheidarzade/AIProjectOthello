@@ -3,7 +3,7 @@ from copy import copy, deepcopy
 from model.Board import Board
 from enum import Enum
 from model.SquareType import SquareType
-
+import time
 from model.AIPlayer import AIPlayer
 
 
@@ -14,9 +14,9 @@ class GameFeatureState(Enum):
 class MachineLearningFeatures:
 
     def __init__(self):
-        self.featureRange = 200
+        self.featureRange = 120
         self.numberOfFeatures = 7
-        self.numberOfTeams = 2
+        self.numberOfTeams = 7
         self.crossOverRate = 0.8
         self.mutationRate = 0.3
         self.geneticFeatures = []
@@ -52,6 +52,11 @@ class MachineLearningFeatures:
         randIndex = random.randint(0, self.numberOfFeatures - 1)
         randFeatureNum = random.randint(-self.featureRange, self.featureRange)
         feature[randIndex] = randFeatureNum
+        randIndex2 = randIndex
+        while randIndex2 == randIndex:
+            randIndex2 = random.randint(0, self.numberOfFeatures - 1)
+        randFeatureNum2 = random.randint(-self.featureRange, self.featureRange)
+        feature[randIndex2] = randFeatureNum2
         return feature
 
     def doGeneticAlgorithm(self):
@@ -69,7 +74,7 @@ class MachineLearningFeatures:
                         mutationRandNum = random.uniform(0, 1)
                         if mutationRandNum <= self.mutationRate:
                             childs[iChild] = self.doMutation(childs[iChild])
-                            self.mutationRate *= 0.9
+                            self.mutationRate *= 0.95
 
                     allChilds.append(childs[0])
                     allChilds.append(childs[1])
@@ -108,8 +113,6 @@ class MachineLearningFeatures:
 
     def doGame(self, feautre1, feautre2):
         boardGame = Board()
-
-
         while not boardGame.isEnded:
             player1 = AIPlayer(boardGame, SquareType.BLACK, self.makeAIPlayerFeatures(feautre1))
             item = player1.getNextMove()
@@ -147,7 +150,7 @@ class MachineLearningFeatures:
         
         tmpCh = 0
         for index in range(0, len(tempFeature)):
-            tmpCh += (index + 1) / divisorNum 
+            tmpCh = (index + 1) / divisorNum 
             tempChance.append(tmpCh)
             
         cum_chance = tuple(tempChance)
@@ -158,7 +161,6 @@ class MachineLearningFeatures:
             if randomItem[0][1] not in res:   
                 res.append(randomItem[0][1])
                 resSize += 1
-        
 
         tmpGeneticFeatures = []
         for ind in res:
@@ -167,13 +169,20 @@ class MachineLearningFeatures:
 
     def runGenetic(self):
         print(self.geneticFeatures)
+        # 10 ta
         self.doGeneticAlgorithm()
+        # 100 ta
+
         score = [0 for _ in range(0, len(self.geneticFeatures))]
+
         for ind1, feautre1 in enumerate(self.geneticFeatures):
             for ind2, feautre2 in enumerate(self.geneticFeatures):
-                if ind1 == ind2:
+                if ind1 <= ind2:
                     continue
+                start = time.time()
                 res = self.doGame(feautre1, feautre2)
+                end = time.time()
+                print(end - start)
                 if (res[0] == GameFeatureState.Equal):
                     score[ind1] += 1
                     score[ind2] += 1
@@ -181,10 +190,11 @@ class MachineLearningFeatures:
                     score[ind1] += 3
                 elif (res[0] == GameFeatureState.Lose):
                     score[ind2] += 3
+        print('First Generation Completed!!!')
         self.filterGeneticFeatures(score)
 
 
 ml = MachineLearningFeatures()
 ml.randomBeginingPopulation()
-for _ in range(0, 20):  
+for _ in range(0, 4):  
     ml.runGenetic()

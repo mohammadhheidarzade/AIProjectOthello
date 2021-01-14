@@ -24,8 +24,8 @@ class AIPlayer:
 
     discCount = 1
     validMoves = 1
-    maxDepth = 5
-    branch =1
+    maxDepth = 4
+    branch = 3
     squareScores = [[120, -20, 20,  5,  5, 20, -20, 120],
                     [-20, -40, -5, -5, -5, -5, -40, -20],
                     [ 20,  -5, 15,  3,  3, 15,  -5,  20],
