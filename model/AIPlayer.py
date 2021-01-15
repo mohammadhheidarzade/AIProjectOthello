@@ -36,7 +36,7 @@ class AIPlayer:
                     [120, -20, 20,  5,  5, 20, -20, 120]]
     
 
-    machineLearningFitures = [120, 20, 5, -5, -20, -40]
+    machineLearningFitures = [120, 20, 5, 3, -5, -20, -40]
             # Values squaresScores, discCount, validMoves
 
     numberOfCalc = 0

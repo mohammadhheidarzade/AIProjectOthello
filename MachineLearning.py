@@ -14,14 +14,13 @@ class GameFeatureState(Enum):
 class MachineLearningFeatures:
 
     def __init__(self):
-        self.featureRange = 120
+        self.featureRange = 50
         self.numberOfFeatures = 7
         self.numberOfTeams = 7
         self.crossOverRate = 0.8
         self.mutationRate = 0.3
         self.geneticFeatures = []
-
-
+        self.generation = 0
 
     def randomBeginingPopulation(self):
         for i in range(0, self.numberOfTeams):
@@ -168,21 +167,21 @@ class MachineLearningFeatures:
         self.geneticFeatures = tmpGeneticFeatures
 
     def runGenetic(self):
-        print(self.geneticFeatures)
-        # 10 ta
         self.doGeneticAlgorithm()
-        # 100 ta
-
         score = [0 for _ in range(0, len(self.geneticFeatures))]
+
+        numberOfGame = len(self.geneticFeatures) * (len(self.geneticFeatures) - 1) / 2
 
         for ind1, feautre1 in enumerate(self.geneticFeatures):
             for ind2, feautre2 in enumerate(self.geneticFeatures):
                 if ind1 <= ind2:
                     continue
+                print(f"Generation: {self.generation}, Number of games left: {numberOfGame} ", end='')
+                numberOfGame -= 1
                 start = time.time()
                 res = self.doGame(feautre1, feautre2)
                 end = time.time()
-                print(end - start)
+                print(f"Time: {end - start}")
                 if (res[0] == GameFeatureState.Equal):
                     score[ind1] += 1
                     score[ind2] += 1
@@ -190,11 +189,27 @@ class MachineLearningFeatures:
                     score[ind1] += 3
                 elif (res[0] == GameFeatureState.Lose):
                     score[ind2] += 3
-        print('First Generation Completed!!!')
         self.filterGeneticFeatures(score)
+        for row in self.geneticFeatures:
+            print(row)
 
 
 ml = MachineLearningFeatures()
 ml.randomBeginingPopulation()
-for _ in range(0, 4):  
+for i in range(0, 15):
+    ml.generation += 1
+    start = time.time()
     ml.runGenetic()
+    end = time.time()
+    with open('log.txt', 'a') as f:
+        f.write(f"Generation: {ml.generation}\n")
+        f.write(f"Time: {(end - start) / 60} minutes\n")
+        f.write(f"Features:\n")
+        for item in ml.geneticFeatures:
+            f.write("%s\n" % item)
+    with open('hidden/log.txt', 'a') as f:
+        f.write(f"Generation: {ml.generation}\n")
+        f.write(f"Time: {(end - start) / 60} minutes\n")
+        f.write(f"Features:\n")
+        for item in ml.geneticFeatures:
+            f.write("%s\n" % item)
